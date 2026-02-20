@@ -97,3 +97,15 @@ pub const GE: u8   = 0x1F;
 /// Compare less-than-or-equal
 /// `[8:opcode][4:dest][4:src1][4:src2]`
 pub const LE: u8   = 0x20;
+/// Increment
+/// `[8:opcode][4:dest]`
+pub const INC: u8  = 0x21;
+/// Decrement
+/// `[8:opcode][4:dest]`
+pub const DEC: u8  = 0x22;
+/// Add immediate
+/// `[8:opcode][4:dest][4:src][32:imm]`
+pub const ADDI: u8 = 0x23;
+/// Subtract immediate
+/// `[8:opcode][4:dest][4:src][32:imm]`
+pub const SUBI: u8 = 0x24;

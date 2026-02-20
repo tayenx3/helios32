@@ -545,7 +545,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[1]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -587,7 +587,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[2]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -631,7 +631,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[1]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -675,7 +675,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[2]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -721,7 +721,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[1]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -763,7 +763,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[2]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -807,7 +807,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[1]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -851,7 +851,7 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                     Ok(d) => d,
                     Err(_) => {
                         if let Some(addr) = labels.get(parts[2]) {
-                            (*addr as i32 - *current_addr as i32 + 6) as u32
+                            (*addr as i32 - *current_addr as i32) as u32
                         } else {
                             return Err(format!(
                                 "error on line {}: invalid jump target `{}`",
@@ -1013,8 +1013,107 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                 0, 0, 0
             ]);
         },
+        "inc" | "INC" => {
+            if parts.len() != 2 {
+                return Err(format!(
+                    "error on line {}: invalid argument count for INC instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                INC,
+                dest,
+                0, 0, 0, 0
+            ]);
+        },
+        "dec" | "DEC" => {
+            if parts.len() != 2 {
+                return Err(format!(
+                    "error on line {}: invalid argument count for DEC instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                DEC,
+                dest,
+                0, 0, 0, 0
+            ]);
+        },
+        "addi" | "ADDI" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid argument count for ADDI instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let imm = if parts[3].starts_with("+") {
+                parse_immediate(
+                    parts[3].strip_prefix("+")
+                        .unwrap()
+                ).map_err(|err| format!("error on line {}: {err}", idx+1))?
+            } else if parts[3].starts_with("-") {
+                -(parse_immediate(
+                    parts[3].strip_prefix("-")
+                        .unwrap()
+                ).map_err(|err| format!("error on line {}: {err}", idx+1))? as i32) as u32
+            } else {
+                parse_immediate(parts[3])
+                    .map_err(|err| format!("error on line {}: {err}", idx+1))?
+            }.to_le_bytes();
+            
+            result.extend([
+                ADDI,
+                dest | (src1 << 4),
+                imm[0], imm[1], imm[2], imm[3]
+            ]);
+        },
+        "subi" | "SUBI" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid argument count for SUBI instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let imm = if parts[3].starts_with("+") {
+                parse_immediate(
+                    parts[3].strip_prefix("+")
+                        .unwrap()
+                ).map_err(|err| format!("error on line {}: {err}", idx+1))?
+            } else if parts[3].starts_with("-") {
+                -(parse_immediate(
+                    parts[3].strip_prefix("-")
+                        .unwrap()
+                ).map_err(|err| format!("error on line {}: {err}", idx+1))? as i32) as u32
+            } else {
+                parse_immediate(parts[3])
+                    .map_err(|err| format!("error on line {}: {err}", idx+1))?
+            }.to_le_bytes();
+            
+            result.extend([
+                SUBI,
+                dest | (src1 << 4),
+                imm[0], imm[1], imm[2], imm[3]
+            ]);
+        },
         other if other.ends_with(":") => if parts.len() != 1 {
             assemble_parts(idx, &parts[1..], result, labels, current_addr)?;
+            return Ok(());
+        } else {
+            return Ok(());
         },
         other => return Err(format!(
             "error on line {}: unrecognized instruction: `{other}`",

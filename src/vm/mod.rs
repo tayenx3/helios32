@@ -343,11 +343,11 @@ impl M0_32 {
             },
             isa::RET => {
                 let mut bytes = [0; 4];
-                for i in 0..4 {
-                    let sp = self.registers[CSP as usize];
-                    bytes[i] = self.mem[sp as usize];
-                    self.registers[CSP as usize] = self.registers[CSP as usize].wrapping_add(1);
+                let sp = self.registers[CSP as usize];
+                for i in 1..5 {
+                    bytes[i - 1] = self.mem[sp.wrapping_add(i as u32) as usize];
                 }
+                self.registers[CSP as usize] = sp.wrapping_add(4);
 
                 self.registers[RPC as usize] = u32::from_le_bytes(bytes);
             },
@@ -392,6 +392,30 @@ impl M0_32 {
                 let src2 = ((inst >> 16) & 0xF) as usize;
 
                 self.registers[dest] = (self.registers[src1] <= self.registers[src2]) as u32;
+            },
+            isa::INC => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+
+                self.registers[dest] = self.registers[dest].wrapping_add(1);
+            },
+            isa::DEC => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+
+                self.registers[dest] = self.registers[dest].wrapping_sub(1);
+            },
+            isa::ADDI => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xFFFFFFFF) as u32;
+
+                self.registers[dest] = self.registers[src1].wrapping_add(src2);
+            },
+            isa::SUBI => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xFFFFFFFF) as u32;
+
+                self.registers[dest] = self.registers[src1].wrapping_sub(src2);
             },
             _ => (),
         }

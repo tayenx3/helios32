@@ -1,10 +1,17 @@
-            ldi gr0 0
-            ldi gr1 1
-            ldi gr2 10
+; main starting point     
+@start:                         ldi gr0 10
+                                ldi gr1 5
 
-.Lloop:     add gr0 gr0 gr1
-            eq gr3 gr0 gr2
-            jii rel .Lend gr3
-            jmi rel .Lloop
+                                cai rel @mul
 
-.Lend:      hlt
+                                hlt
+
+; multiplication function
+@mul:                           ldi grb 0
+
+.mul_loop:                      add gr2 gr1 gr2
+                                dec gr0
+                                ne gra gr0 grb
+                                jii rel .mul_loop gra
+
+                                ret
