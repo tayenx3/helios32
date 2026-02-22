@@ -139,3 +139,33 @@ pub const POBU: u8 = 0x2D;
 /// Pop word
 /// `[8:opcode][4:dest]`
 pub const POW: u8  = 0x2E;
+/// Multiply low
+/// `[8:opcode][4:dest]`
+pub const MUL: u8  = 0x2F;
+/// Divide
+/// `[8:opcode][4:dest]`
+pub const DIV: u8  = 0x30;
+/// Remainder
+/// `[8:opcode][4:dest]`
+pub const REM: u8  = 0x31;
+/// Float add
+/// `[8:opcode][4:dest]`
+pub const FADD: u8 = 0x32;
+/// Float subtract
+/// `[8:opcode][4:dest]`
+pub const FSUB: u8 = 0x33;
+/// Float multiply
+/// `[8:opcode][4:dest]`
+pub const FMUL: u8 = 0x34;
+/// Float divide
+/// `[8:opcode][4:dest]`
+pub const FDIV: u8 = 0x35;
+/// Float remainder
+/// `[8:opcode][4:dest]`
+pub const FREM: u8 = 0x36;
+/// Multiply high signed
+/// `[8:opcode][4:dest]`
+pub const MUHS: u8 = 0x37;
+/// Multiply high unsigned
+/// `[8:opcode][4:dest]`
+pub const MUHU: u8 = 0x38;

@@ -1294,6 +1294,216 @@ fn assemble_parts(idx: usize, parts: &[&str], result: &mut Vec<u8>, labels: &Has
                 0, 0, 0, 0
             ]);
         },
+        "mul" | "MUL" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for MUL instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                MUL,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "div" | "DIV" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for DIV instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                DIV,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "rem" | "REM" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for REM instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                REM,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "fadd" | "FADD" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for FADD instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                FADD,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "fsub" | "FSUB" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for FSUB instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                FSUB,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "fmul" | "FMUL" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for FMUL instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                FMUL,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "fdiv" | "FDIV" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for FDIV instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                FDIV,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "frem" | "FREM" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for FREM instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                FREM,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "muhs" | "MUHS" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for MUHS instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                MUHS,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
+        "muhu" | "MUHU" => {
+            if parts.len() != 4 {
+                return Err(format!(
+                    "error on line {}: invalid operand count for MUHU instruction",
+                    idx + 1
+                ));
+            }
+            let dest = parse_register(parts[1])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src1 = parse_register(parts[2])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            let src2 = parse_register(parts[3])
+                .map_err(|err| format!("error on line {}: {err}", idx+1))?;
+            
+            result.extend([
+                MUHU,
+                dest | (src1 << 4),
+                src2,
+                0, 0, 0
+            ]);
+        },
         other if other.ends_with(":") => if parts.len() != 1 {
             assemble_parts(idx, &parts[1..], result, labels, current_addr)?;
             return Ok(());
@@ -1350,7 +1560,9 @@ pub fn parse_register(s: &str) -> Result<u8, String> {
 
 pub fn parse_immediate(s: &str) -> Result<u32, String> {
     let lowercase = s.to_lowercase();
-    if s.starts_with("0x") {
+    if let Ok(f) = s.parse::<f32>() {
+        Ok(f.to_bits())
+    } else if s.starts_with("0x") {
         u32::from_str_radix(&lowercase[2..], 16)
             .map_err(|_| format!("invalid immediate: `{s}`"))
     } else if s.starts_with("0b") {

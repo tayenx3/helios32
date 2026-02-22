@@ -6,13 +6,13 @@ use std::path::Path;
 use registers::*;
 
 #[derive(Clone)]
-pub struct MachinaArgon {
+pub struct Helios32 {
     pub registers: [u32; 16],
     pub mem: Box<[u8; 4_294_967_296]>,
     pub is_running: bool,
 }
 
-impl MachinaArgon {
+impl Helios32 {
     pub fn new() -> Self {
         let mut registers = [0u32; 16];
         registers[RPC as usize] = 3_221_225_472u32; // 1GB Instruction Memory
@@ -53,6 +53,8 @@ impl MachinaArgon {
     }
 
     pub fn cycle(&mut self) {
+        self.registers[0] = 0u32;
+        
         let pc = self.registers[RPC as usize];
         let inst = u64::from_le_bytes([
             self.mem[pc as usize],
@@ -502,9 +504,77 @@ impl MachinaArgon {
 
                 self.registers[dest] = u32::from_le_bytes(bytes);
             },
+            isa::MUL => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = ((self.registers[src1] as i64 * self.registers[src2] as i64) & 0xFFFFFFFF) as u32;
+            },
+            isa::DIV => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = self.registers[src1].checked_div(self.registers[src2]).unwrap_or(0);
+            },
+            isa::REM => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = self.registers[src1].checked_rem(self.registers[src2]).unwrap_or(0);
+            },
+            isa::MUHS => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = ((self.registers[src1] as i64 * self.registers[src2] as i64) >> 32) as i32 as u32;
+            },
+            isa::MUHU => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = ((self.registers[src1] as i64 * self.registers[src2] as i64) >> 32) as u32;
+            },
+            isa::FADD => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = (f32::from_bits(self.registers[src1]) + f32::from_bits(self.registers[src2])).to_bits();
+            },
+            isa::FSUB => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = (f32::from_bits(self.registers[src1]) - f32::from_bits(self.registers[src2])).to_bits();
+            },
+            isa::FMUL => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = (f32::from_bits(self.registers[src1]) + f32::from_bits(self.registers[src2])).to_bits();
+            },
+            isa::FDIV => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = (f32::from_bits(self.registers[src1]) / f32::from_bits(self.registers[src2])).to_bits();
+            },
+            isa::FREM => {
+                let dest = ((inst >> 8) & 0xF) as usize;
+                let src1 = ((inst >> 12) & 0xF) as usize;
+                let src2 = ((inst >> 16) & 0xF) as usize;
+
+                self.registers[dest] = (f32::from_bits(self.registers[src1]) % f32::from_bits(self.registers[src2])).to_bits();
+            },
             _ => (),
         }
-
-        self.registers[0] = 0u32;
     }
 }
