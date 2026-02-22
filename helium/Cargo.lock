@@ -3,13 +3,5 @@
 version = 4
 
 [[package]]
-name = "machina"
-version = "0.1.0"
-
-[[package]]
-name = "machina-argon"
-version = "0.1.0"
-
-[[package]]
-name = "machina-helium"
+name = "m-ar32"
 version = "0.1.0"

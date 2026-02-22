@@ -1,0 +1,8 @@
+[package]
+name = "machina-helium"
+version = "0.1.0"
+edition = "2021"
+authors = ["tayenp <kontajiousgd00@gmail.com>"]
+license = "MIT"
+
+[dependencies]

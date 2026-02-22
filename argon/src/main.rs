@@ -8,7 +8,7 @@ use std::env;
 fn main() {
     let args = env::args().collect::<Vec<_>>();
     if args.len() > 4 || args.len() < 2 {
-        eprintln!("Usage: m0-32 <program>.mar32 (<output register>)");
+        eprintln!("Usage: m0-32 <program>.mar (<output register>)");
         return;
     }
 

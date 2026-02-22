@@ -1,10 +1,9 @@
 [package]
-name = "m-ar32"
+name = "machina"
 version = "0.1.0"
 edition = "2021"
-description = "Experimental 32-bit hardware emulator"
-authors = ["tayenp <kontajiousgd00@gmail.com>"]
-license = "MIT"
-repository = "https://github.com/tayenx3/m-ar32"
+
+[workspace]
+members = ["argon", "helium"]
 
 [dependencies]
